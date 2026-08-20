@@ -1,0 +1,29 @@
+MIRA artifact reference
+
+Artifact selected for Path B
+
+Artifact: Existing MIRA Project 3 MVP
+Primary stack: n8n orchestration with model/API tools, Google Sheets/Docs and a Railway-hosted MIRA application
+Audit focus: The operational path used to create and deliver one photoshoot-planning result
+
+What the system does
+
+MIRA is an AI-assisted photoshoot-planning MVP. A user completes a brand-identity questionnaire; n8n orchestrates model/API calls that synthesise the answers into a structured shoot plan, moodboard and five-image Brand World. Results are persisted through Google Sheets/Docs and delivered in a Railway-hosted app. This audit focuses on inference, retries, media transfer, storage and idle runtime.
+
+Primary user journey
+
+A user submits the MIRA questionnaire.
+
+n8n validates and routes the input.
+
+Model/API calls interpret the identity signals and produce creative direction.
+
+MIRA generates the structured shoot plan and moodboard/media outputs.
+
+Results are stored and delivered to the user through the app.
+
+Architecture snapshot used for the audit
+
+Questionnaire / form -> n8n orchestration -> model and image APIs -> Google Sheets/Docs/storage -> Railway-hosted MIRA app
+
+This reference describes the previous artifact without copying unrelated Project 3 materials into the lab repository.
