@@ -1,0 +1,214 @@
+MIRA Green Retrofit Audit
+
+Path: B — Green retrofit audit
+Artifact reference: mira_artifact_reference.md
+Primary audience: MIRA product and technical lead
+
+One unit of value
+
+One unit of value for MIRA is one complete, usable photoshoot plan and moodboard generated for one submitted questionnaire.
+
+This is the functional unit R. A result is “usable” when it is delivered, coherent and accepted without requiring a full workflow rerun.
+
+Initial measurement boundary
+
+Included in the first baseline:
+
+Questionnaire/form input payload
+
+n8n workflow execution, routing, retries and tool calls
+
+Text and image model/API inference
+
+Google Sheets/Docs and media storage or transfer
+
+Railway-hosted application delivery and idle runtime
+
+Initially excluded, with the exclusion disclosed rather than treated as zero:
+
+upstream foundation-model training, because attributable provider data is not yet available;
+
+end-user device energy, until a defensible device measurement method is selected.
+
+Three-row lever table
+
+Lever
+
+Current assumption — honest guess
+
+Better alternative to explore
+
+Model / size
+
+A general-purpose model may handle validation, extraction, routing and creative synthesis; the exact model and settings are not yet logged.
+
+Use deterministic validation, a smaller model for extraction/routing and the stronger model only for final creative synthesis. Approve the route only after a blinded quality evaluation.
+
+Call pattern
+
+The workflow may run synchronously end to end; retries, resubmissions or small revisions may repeat the full chain.
+
+Normalise inputs, add an idempotency key, cache eligible outputs, regenerate only changed sections and queue non-urgent image work.
+
+Infrastructure / region / retention
+
+Railway and third-party services are used, but idle utilisation, service regions, grid intensity and retention periods are not yet documented.
+
+Test scale-to-zero/serverless execution, assess regions against GDPR/latency/carbon criteria, generate low-resolution drafts first and expire rejected/intermediate media after an approved retention period.
+
+Retrofit audit template
+
+Artifact
+
+MIRA Project 3 MVP, summarised in mira_artifact_reference.md.
+
+Primary user journey
+
+Questionnaire submission → n8n orchestration → model/image inference → structured plan and moodboard → storage → delivery in the MIRA app.
+
+Probable hotspots — compute and data movement
+
+Model and image inference — probably high: variable work grows with prompts, context, output tokens, image count, resolution and regeneration.
+
+Retries and duplicate runs — repeated work: an unchanged questionnaire or a small revision may trigger more of the workflow than necessary.
+
+Media transfer and storage — probably medium: drafts and rejected variants may move across services and persist after their useful life.
+
+Idle app or automation capacity — unknown: an MVP with uneven traffic may leave provisioned capacity under-used.
+
+This ranking is an architecture-based hypothesis, not measured energy consumption.
+
+Four-pillar map
+
+Pillar
+
+MIRA hotspot or decision
+
+Intended effect
+
+Carbon
+
+Provider region and timing of deferrable work
+
+Explore a lower grid-carbon-intensity option without breaching data residency, latency or availability requirements.
+
+Energy
+
+Model calls, tokens, image generation, transfer and idle runtime
+
+Reduce unnecessary electricity demand per R.
+
+Hardware
+
+Reserved compute and retained storage
+
+Improve utilisation and reduce the share of embodied hardware emissions allocated to each R.
+
+Measurement
+
+Stable boundary, telemetry and functional unit R
+
+Compare the current and proposed stack with the same method and quality guardrails.
+
+Green opportunities — prioritised
+
+1. Quick win — instrument, de-duplicate and cache
+
+Problem: Retries and unchanged inputs may repeat model work.
+Change: Log every call per R; normalise the questionnaire; create an idempotency key; cache safe outputs; include prompt/model version in the cache key; regenerate only the affected section.
+Pillars: Energy, hardware, measurement.
+Patterns: Optimize agent orchestration to reduce unnecessary model calls and Cache static data.
+
+2. Quick-to-medium — right-size models with a quality gate
+
+Problem: One strong model may be used for tasks that rules or a smaller model can complete.
+Change: Route validation and simple structure to deterministic logic/smaller models; reserve the stronger model for creative synthesis and difficult cases.
+Pillars: Energy, hardware, measurement.
+Pattern: Use right-sized and energy-efficient AI models.
+Guardrail: A blinded evaluation must show non-inferior usefulness, specificity and brand distinctiveness.
+
+3. Medium — stage media fidelity and automate retention
+
+Problem: High-resolution drafts, unused variants and intermediate files may accumulate.
+Change: Generate low-resolution drafts first; upscale only selected outputs; use modern image formats; set a documented deletion policy for rejected and intermediate media.
+Pillars: Energy, hardware, measurement.
+Patterns: Optimize image size, Serve images in modern formats and Set storage retention policies.
+
+4. Medium-to-strategic — match infrastructure and timing to demand
+
+Problem: An uneven MVP workload may leave app or automation capacity running while no user journey is active.
+Change: Evaluate scale-to-zero/serverless execution; queue deferrable image work; review service region using data residency, latency, availability and grid carbon intensity together.
+Pillars: Carbon, energy, hardware, measurement.
+Patterns: Scale down applications when not in use and Use carbon-aware scheduling and region selection for AI workloads.
+
+Measurement plan
+
+Baseline period
+
+Observe one representative week without changing the user journey. Record for every R:
+
+model calls by type and model;
+
+input/output tokens and image-generation settings;
+
+retries, duplicate submissions and cacheable repetitions;
+
+images generated, images selected and intermediate assets retained;
+
+MB transferred and stored;
+
+end-to-end latency, failure rate and API cost;
+
+application/worker uptime, CPU and memory utilisation;
+
+provider region and available grid-carbon-intensity information.
+
+Retrofit period
+
+Enable the four levers for a matched week or matched journey set. Keep the same R, boundary, prompts, evaluation rubric and comparison method.
+
+Proposed success thresholds
+
+at least 30% fewer model calls per R;
+
+at least 25% fewer tokens per R;
+
+at least 50% fewer intermediate bytes retained;
+
+no material loss in usefulness, specificity or brand distinctiveness;
+
+no unacceptable increase in latency, failure rate or user-visible cold starts.
+
+These are decision thresholds, not current results.
+
+Before/after hypotheses
+
+If duplicate/retry work is a material share of current runs, idempotency and partial regeneration should reduce total model calls per R by approximately 20–30%.
+
+If draft fidelity and retention are staged, intermediate image bytes should fall by approximately 40–70%.
+
+If the hosting configuration safely supports scale-to-zero, application compute during no-traffic windows should approach zero, subject to the platform's underlying shared infrastructure.
+
+The hypotheses must be replaced with measured results after the experiment.
+
+Risks and trade-offs
+
+A smaller model may reduce distinctiveness or accuracy; use routing and quality evaluation rather than a blind downgrade.
+
+Caching can create stale results or retain sensitive inputs too long; version keys and retention controls are required.
+
+Image compression and conversion consume CPU; the net effect must be tested against storage and transfer savings.
+
+Scale-to-zero may introduce cold-start latency.
+
+Region shifting may conflict with GDPR/data residency, increase network transfer, reduce service availability or worsen latency.
+
+Provider energy, region and hardware allocation data may be incomplete, limiting a full SCI calculation.
+
+Honest carbon framing
+
+The audit does not claim that MIRA is carbon neutral. Tokens, calls, bytes, latency and cost are operational signals; cost is not a carbon metric. A defensible SCI-style result requires consistent energy E, grid carbon intensity I, allocated embodied hardware emissions M, boundary and functional unit R. Offsets do not reduce an SCI score.
+
+Core measurement source
+
+Green Software Foundation — Software Carbon Intensity Specification
